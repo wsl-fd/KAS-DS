@@ -1,0 +1,8 @@
+**/__pycache__/
+Dockerfile.dev
+*.scap*
+raw.txt
+dev.py
+ATK_TIMESTAMPS
+scenario/inis.py
+record_dev.sh

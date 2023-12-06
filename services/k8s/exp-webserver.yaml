@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vulredis
+  labels:
+    app: vulredis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vulredis
+  template:
+    metadata:
+      labels:
+        app: vulredis
+    spec:
+      hostNetwork: true
+      containers:
+      - name: vulredis
+        image: vulhub/redis:5.0.7
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+          - mountPath: /host
+            name: host-mount
+            readOnly: true
+      volumes:
+      - name: host-mount
+        hostPath:
+          path: /
+          
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: vulredis
+#   labels:
+#     app: vulredis
+# spec:
+#   ports:
+#   - port: 6379
+#     targetPort: 6379
+#     protocol: TCP
+#   selector:
+#     app: vulredis

@@ -1,0 +1,18 @@
+apiVersion: skaffold/v4beta5
+kind: Config
+metadata:
+  name: employee-service
+# build:
+#   artifacts:
+#     - image: piomin/employee
+#       jib:
+#         args:
+#           - -DskipTests
+#         fromImage: 'eclipse-temurin:sha256:ec91b7d1c3c31a9183f73f9e6279d26021f25dcc09f5d33fe03b153c6ed64120'
+#   tagPolicy:
+#     gitCommit: {}
+manifests:
+  rawYaml:
+    - ../k8s/privileges.yaml
+    - ../k8s/mongodb-**.yaml
+    - k8s/**.yaml

@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: employee
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  datasource:
+    url: jdbc:mysql://kamysql:33060/KADB?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+
+  redis:
+    database: 0
+    host: 192.168.49.2
+    password: ''
+    pool:
+      max-active: 8
+      max-idle: 8
+      max-wait: -1
+      min-idle: 0
+    port: 6379
+    timeout: 5000
+
+logging:
+  # level:
+  #   root: DEBUG
+  pattern: 
+    console: "%d{yyyy-MM-dd HH:mm:ss} ${LOG_LEVEL_PATTERN:-%5p} %m%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS

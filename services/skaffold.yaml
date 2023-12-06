@@ -1,0 +1,83 @@
+apiVersion: skaffold/v4beta5
+kind: Config
+metadata:
+  name: sample-spring-microservices-kubernetes
+build:
+  local:
+    push: false
+
+  artifacts:
+    # - image: piomin/admin
+    #   jib:
+    #     project: admin-service
+    #     fromImage: 'openjdk:17-alpine'
+    - image: piomin/department
+      jib:
+        project: department-service
+        args:
+          - -DskipTests
+        fromImage: 'openjdk:17-alpine'
+
+    # - image: piomin/employee
+    #   jib:
+    #     project: employee-service
+    #     args:
+    #       - -DskipTests
+    #     fromImage: 'openjdk:17-alpine'
+
+    - image: piomin/employee
+      context: employee-service
+      custom:
+        buildCommand: |
+          # mvn clean package -DskipTests && 7z x target/employee-service-1.2.war -otarget/exploded && docker build -t $IMAGE -f Dockerfile.dev $BUILD_CONTEXT
+          mvn clean package -DskipTests && docker build -t $IMAGE -f Dockerfile $BUILD_CONTEXT
+        # dependencies:
+        #   paths:
+        #   - target/classes
+        #   - Dockerfile.dev
+        #   ignore:
+        #   - target/exploded
+
+    - image: piomin/gateway
+      jib:
+        project: gateway-service
+        # fromImage: 'openjdk:17-alpine'
+        fromImage: 'openjdk:11-jre'
+
+    # - image: piomin/gateway
+    #   context: gateway-service
+    #   custom:
+    #     buildCommand: |
+    #       mvn clean package && 7z x target/gateway-service-1.2.war -otarget/exploded && docker build -t $IMAGE -f Dockerfile.dev $BUILD_CONTEXT
+    #     dependencies:
+    #       paths:
+    #       - target/classes
+    #       - Dockerfile.dev
+    #       ignore:
+    #       - target/exploded
+
+
+    - image: piomin/organization
+      jib:
+        project: organization-service
+        # fromImage: 'eclipse-temurin@sha256:ec91b7d1c3c31a9183f73f9e6279d26021f25dcc09f5d33fe03b153c6ed64120'
+        fromImage: 'openjdk:17-alpine'
+        args:
+          - -DskipTests
+  tagPolicy:
+    gitCommit: {}
+manifests:
+  rawYaml:
+    - k8s/mongodb-*.yaml
+    - k8s/vulredis-deployment.yaml
+    # no skaff
+    # - k8s/mysql-deployment.yaml
+#    - k8s/ingress.yaml
+    - k8s/privileges.yaml
+    # - admin-service/k8s/*.yaml
+    - department-service/k8s/*.yaml
+    - employee-service/k8s/*.yaml
+    - gateway-service/k8s/*.yaml
+    - organization-service/k8s/*.yaml
+deploy:
+  kubectl: {}
